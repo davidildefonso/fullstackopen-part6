@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect, useDispatch, useSelector  } from 'react-redux'
 import { createAnecdote } from '../reducers/anecdoteReducer'
 import { showNotification, hideNotification } from '../reducers/notificationReducer'
 
@@ -8,11 +8,11 @@ const AnecdoteForm = (props) => {
    const dispatch = useDispatch()
 	const timeout = useSelector(state => state.notification.timeout)
 
-  const addAnecdote = async  (event) => {
+  const addAnecdote =   (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''	
-    dispatch(createAnecdote(content))
+    props.createAnecdote(content)
 
 
 	if(timeout){
@@ -42,4 +42,18 @@ const AnecdoteForm = (props) => {
   )
 }
 
-export default AnecdoteForm
+
+const mapDispatchToProps = dispatch => {
+  return {
+    createAnecdote: value => {
+      dispatch(createAnecdote(value))
+    },
+  }
+}
+
+
+
+export default connect(
+  null, 
+  mapDispatchToProps
+)(AnecdoteForm)
