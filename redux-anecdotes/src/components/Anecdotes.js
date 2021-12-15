@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addVote } from '../reducers/anecdoteReducer'
 import { showNotification, hideNotification } from '../reducers/notificationReducer'
+import anecdoteService from '../services/anecdotes'
 
 const Anecdote = ({ anecdote, handleClick }) => {
   return(
@@ -29,8 +30,10 @@ const Anecdotes = () => {
   	const dispatch = useDispatch()
 	const timeout = useSelector(state => state.notification.timeout)
 
-	const vote = (id) => {
-		dispatch(addVote(id))
+	const vote = async (anecdote) => {
+		const updatedAnecdote = await anecdoteService.vote(anecdote.id, {...anecdote, votes: anecdote.votes + 1} )
+		
+		dispatch(addVote(updatedAnecdote))
 
 		if(timeout){
 			clearTimeout(timeout)
@@ -52,7 +55,7 @@ const Anecdotes = () => {
    <>
 	 <h2>Anecdotes</h2>
       {anecdotes.map(anecdote =>
-			<Anecdote key={anecdote.id} anecdote={anecdote} handleClick={() => vote(anecdote.id)} />
+			<Anecdote key={anecdote.id} anecdote={anecdote} handleClick={() => vote(anecdote)} />
       )}
    </>
   )
